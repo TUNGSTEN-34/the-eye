@@ -21,13 +21,13 @@ API documentation: https://datahelpdesk.worldbank.org/knowledgebase/articles/889
 
 ## News discovery
 
-The News section queries the GDELT DOC 2.0 API for recent coverage mentioning Uganda or East Africa, then links directly to the original publisher. The site labels these as **external, unverified reports**: appearing in a search index is not proof that a story or claim is accurate. Editors should independently review sources before republishing or describing claims as verified.
+The News section calls the same-origin Vercel serverless endpoint in `api/news.js`, which queries the GDELT DOC 2.0 API for recent coverage mentioning Uganda or East Africa and returns a small JSON response to the page. This avoids relying on the visitor's browser to make a cross-origin request directly to GDELT. Results link to the original publisher and are labelled **external, unverified reports**: appearing in a search index is not proof that a story or claim is accurate. Editors should independently review sources before republishing or describing claims as verified. If GDELT is unavailable, the page shows a fallback message and direct publisher links remain available.
 
 GDELT documentation: https://blog.gdeltproject.org/gdelt-doc-2-0-api-debuts/
 
 ## Credentials and setup
 
-- **No API keys or paid credentials are required** for the World Bank indicators API or the GDELT DOC API used by this static front end.
+- **No API keys or paid credentials are required** for the World Bank Indicators API or the GDELT DOC API. The news endpoint (`api/news.js`) runs as a Vercel serverless function; deploy on Vercel for that endpoint to be available. Opening the HTML directly as a local file will not provide the `/api/news` endpoint.
 - The browser must be online, and each external service must allow the request from the visitor's browser. If a source is unavailable or blocks a request, the site shows an error/fallback instead of fabricating results.
 - These calls run in the visitor's browser. A future server-side cache/proxy could improve reliability and control request volume, but it is not required for this first integration.
 - The article submission form remains a local preview only. It does not send or store submissions; connect a secure backend before collecting real submissions or personal information.
