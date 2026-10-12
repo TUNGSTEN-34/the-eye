@@ -29,14 +29,14 @@ Article submissions are designed to be stored in Supabase, not in browser memory
    ```
 6. Deploy the repository to Vercel. Visit `/admin.html` and sign in with that account.
 
-The public article form inserts new submissions with `status = 'pending'`. Row Level Security prevents public visitors from reading pending/rejected submissions or managing articles. The dashboard checks the signed-in user's profile role and only permits users whose role is `admin` to use editorial controls. Editors can edit submissions, approve, reject, return to review, publish, or delete them. The public Articles section queries only `status = 'published'`.
+Visitors create a subscriber account or sign in from the homepage before submitting. The article form inserts submissions with the signed-in subscriber ID and `status = 'pending'`. Row Level Security prevents anonymous visitors from submitting articles, and prevents subscribers from reading pending/rejected submissions or managing articles. The dashboard checks the signed-in user's profile role and only permits users whose role is `admin` to use editorial controls. Editors can edit submissions, approve, reject, return to review, publish, or delete them. The public Articles section queries only `status = 'published'`. The homepage includes bulletin cards for Uganda, world news, politics, business, education, agriculture, technology, health, sports, society and analysis. Bulletin cards filter the currently loaded news-discovery results; they do not claim to be complete topic-specific feeds.
 
 ### Security notes
 
 - The browser config uses only the Supabase public publishable/anon key; this key is designed for public clients when Row Level Security is correctly configured.
 - **Never place a Supabase service-role key in browser code or commit it to GitHub.**
 - Keep the admin account credentials private. Do not promote ordinary contributor accounts to admin.
-- Public unauthenticated article submissions can attract spam; before a high-traffic launch, add CAPTCHA/rate limiting and moderation alerts.
+- Authenticated subscriber submissions can still attract spam; before a high-traffic launch, add CAPTCHA/rate limiting and moderation alerts.
 - This implementation stores the submitted title, topic, summary/article text, author name, and contact email. Tell contributors how their contact information is used.
 
 ## Deployment
