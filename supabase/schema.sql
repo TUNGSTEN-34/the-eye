@@ -1,5 +1,6 @@
--- The Eye Analyst: persistent article submissions and editorial workflow.
--- Run in Supabase SQL Editor. Then sign up/log in through Supabase Auth and promote your account
+-- The Eye Analyst: subscriber article submissions and editorial workflow.
+-- Run in Supabase SQL Editor. Subscribers must create an account/sign in to submit articles.
+-- Then create/log in to the site-owner account through Supabase Auth and promote it
 -- using the final UPDATE statement below (replace the email).
 create extension if not exists pgcrypto;
 
@@ -66,10 +67,11 @@ create policy "Public read published articles" on public.articles
 for select to anon, authenticated using (status = 'published' or public.is_eye_admin());
 
 drop policy if exists "Public submit pending articles" on public.articles;
-create policy "Public submit pending articles" on public.articles
-for insert to anon, authenticated with check (
+drop policy if exists "Subscribers submit their own pending articles" on public.articles;
+create policy "Subscribers submit their own pending articles" on public.articles
+for insert to authenticated with check (
   status = 'pending'
-  and author_id is null
+  and author_id = auth.uid()
   and char_length(author_name) between 1 and 80
   and char_length(author_email) between 3 and 150
   and char_length(title) between 1 and 140
@@ -86,7 +88,8 @@ for delete to authenticated using (public.is_eye_admin());
 
 grant select on public.profiles to authenticated;
 grant select on public.articles to anon, authenticated;
-grant insert on public.articles to anon, authenticated;
+revoke insert on public.articles from anon;
+grant insert on public.articles to authenticated;
 grant update, delete on public.articles to authenticated;
 
 -- After you create your account in Supabase Auth, promote that exact account:
