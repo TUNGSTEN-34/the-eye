@@ -1,44 +1,51 @@
 # The Eye — Analyst
 
-A responsive, dark-blue public-information website with live public indicators, recent news discovery, learning resources, and editorial transparency notes.
+A responsive, dark-blue public-information website with live World Bank indicators, recent news discovery, learning resources, public articles, and an editorial submission workflow.
 
 ## Run locally
 
-Open `index.html` in a browser. No build step or package installation is required.
+Open `index.html` in a browser for the static UI. The Supabase-backed article submission, published-article list, and admin dashboard require the site to be hosted and configured.
 
-## Live data
+## Live data and news
 
-The dashboard requests the latest non-empty observations for Uganda from the public **World Bank Indicators API**:
+- **World Bank Indicators API** supplies Uganda's latest available observations for GDP growth, inflation, population, and employment in agriculture. Each metric shows the observation year and links to its source.
+- **GDELT DOC 2.0** powers `api/news.js`, a Vercel serverless endpoint for recent news discovery. News results are external reports, not independently fact-checked by The Eye.
 
-- GDP growth: `NY.GDP.MKTP.KD.ZG`
-- Consumer-price inflation: `FP.CPI.TOTL.ZG`
-- Total population: `SP.POP.TOTL`
-- Employment in agriculture: `SL.AGR.EMPL.ZS`
+No API key is required for those public data/news sources.
 
-Each indicator links to its World Bank source page. The page shows the observation year returned by the source, because the latest available data can lag behind the current year. Values are not hard-coded, and a failed request is shown as unavailable.
+## Article submissions and editorial dashboard
 
-API documentation: https://datahelpdesk.worldbank.org/knowledgebase/articles/889392
+Article submissions are designed to be stored in Supabase, not in browser memory.
 
-## News discovery
+1. Create a Supabase project at https://supabase.com/dashboard.
+2. In Supabase SQL Editor, run `supabase/schema.sql`.
+3. In `supabase-config.js`, replace `https://YOUR_PROJECT.supabase.co` and `YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY` with your Supabase project URL and public publishable/anon key.
+4. Create the administrator account in Supabase Authentication (Dashboard → Authentication → Users). Use a strong, unique password.
+5. Promote only your own account to admin by running this SQL in the Supabase SQL Editor, replacing the email with the exact admin email:
+   ```sql
+   UPDATE public.profiles
+   SET role = 'admin'
+   WHERE id = (SELECT id FROM auth.users WHERE email = 'YOUR-ADMIN-EMAIL');
+   ```
+6. Deploy the repository to Vercel. Visit `/admin.html` and sign in with that account.
 
-The News section calls the same-origin Vercel serverless endpoint in `api/news.js`, which queries the GDELT DOC 2.0 API for recent coverage mentioning Uganda or East Africa and returns a small JSON response to the page. This avoids relying on the visitor's browser to make a cross-origin request directly to GDELT. Results link to the original publisher and are labelled **external, unverified reports**: appearing in a search index is not proof that a story or claim is accurate. Editors should independently review sources before republishing or describing claims as verified. If GDELT is unavailable, the page shows a fallback message and direct publisher links remain available.
+The public article form inserts new submissions with `status = 'pending'`. Row Level Security prevents public visitors from reading pending/rejected submissions or managing articles. The dashboard checks the signed-in user's profile role and only permits users whose role is `admin` to use editorial controls. Editors can edit submissions, approve, reject, return to review, publish, or delete them. The public Articles section queries only `status = 'published'`.
 
-GDELT documentation: https://blog.gdeltproject.org/gdelt-doc-2-0-api-debuts/
+### Security notes
 
-## Credentials and setup
+- The browser config uses only the Supabase public publishable/anon key; this key is designed for public clients when Row Level Security is correctly configured.
+- **Never place a Supabase service-role key in browser code or commit it to GitHub.**
+- Keep the admin account credentials private. Do not promote ordinary contributor accounts to admin.
+- Public unauthenticated article submissions can attract spam; before a high-traffic launch, add CAPTCHA/rate limiting and moderation alerts.
+- This implementation stores the submitted title, topic, summary/article text, author name, and contact email. Tell contributors how their contact information is used.
 
-- **No API keys or paid credentials are required** for the World Bank Indicators API or the GDELT DOC API. The news endpoint (`api/news.js`) runs as a Vercel serverless function; deploy on Vercel for that endpoint to be available. Opening the HTML directly as a local file will not provide the `/api/news` endpoint.
-- The browser must be online, and each external service must allow the request from the visitor's browser. If a source is unavailable or blocks a request, the site shows an error/fallback instead of fabricating results.
-- These calls run in the visitor's browser. A future server-side cache/proxy could improve reliability and control request volume, but it is not required for this first integration.
-- The article submission form remains a local preview only. It does not send or store submissions; connect a secure backend before collecting real submissions or personal information.
+## Deployment
 
-## Deploy
+The repository is `TUNGSTEN-34/the-eye`. If Vercel is connected to its `main` branch, GitHub commits should trigger deployment automatically. Confirm the latest deployment in Vercel after configuration. The News endpoint needs Vercel's serverless runtime; opening the HTML as a local file will not make `/api/news` available.
 
-Vercel can deploy this static site from the repository root without a build command. When the repository is connected to Vercel, commits to `main` should trigger a deployment automatically.
+## Editorial transparency
 
-## Transparency and editorial safeguards
-
-- Data is sourced from the World Bank API and includes the observation year.
-- News results are discovered by GDELT and linked to the publisher; they are **not independently fact-checked** by this site.
-- External headlines and publisher metadata are inserted as text rather than interpreted as HTML.
-- Article submission is not operational until a secure backend is configured.
+- World Bank figures show their source observation year and may lag the current year.
+- GDELT results are discovery links, not verified claims.
+- Only editor-published articles are displayed in the public Articles section.
+- If Supabase has not been configured, article submissions are not silently saved; the page displays a setup/unavailable message.
