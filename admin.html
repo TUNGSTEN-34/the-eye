@@ -1,75 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noindex, nofollow">
-  <title>Demo Admin Ledger — Analyst</title>
-  <link rel="stylesheet" href="styles.css">
-
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Admin Demo — The Eye Analyst</title><link rel="stylesheet" href="styles.css">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8970568560993567"
      crossorigin="anonymous"></script>
 </head>
-<body>
-  <header class="header">
-    <a class="logo" href="index.html">ELVIS<span>.</span></a>
-    <nav class="nav" aria-label="Main navigation">
-      <a href="index.html">Home</a>
-      <a href="dashboard.html">Projects</a>
-      <a href="account.html">Account demo</a>
-      <a class="active" href="admin.html">Admin demo</a>
-    </nav>
-  </header>
-
-  <main class="page page-wide">
-    <p class="eyebrow">ADMIN WORKFLOW PREVIEW</p>
-    <h1>Demo ledger control.</h1>
-
-    <div class="notice" role="note">
-      <strong>Prototype only — not secured.</strong>
-      This page is publicly accessible and stores demo transactions only in this browser. It has no real admin authentication, shared database, customer accounts, deposits, or real payouts. Do not enter real personal or financial information.
-    </div>
-
-    <section class="balance-panel" aria-live="polite">
-      <div>
-        <div class="label">Current simulated balance</div>
-        <div id="balance" class="balance">UGX 0</div>
-      </div>
-      <button class="btn" id="reset-ledger" type="button">Reset demo ledger</button>
-    </section>
-
-    <section class="ledger-grid">
-      <div class="panel">
-        <h2>Manual demo adjustment</h2>
-        <p class="muted">Add a clearly simulated amount to test the ledger workflow.</p>
-        <form id="admin-form" class="submit-form">
-          <div class="form-group">
-            <label for="adjustment">Amount (UGX)</label>
-            <input id="adjustment" name="adjustment" type="number" min="1" step="1" required placeholder="100000">
-          </div>
-          <button class="btn btn-primary" type="submit">Add demo adjustment</button>
-        </form>
-      </div>
-      <div class="panel">
-        <h2>Next development step</h2>
-        <p>Before this can manage real users, we must connect a trusted authentication provider and server-side database, enforce admin roles on the server, and keep a tamper-resistant audit log.</p>
-        <p class="muted">A hidden link or browser-only password would not secure this page.</p>
-      </div>
-    </section>
-
-    <section class="panel">
-      <div class="section-header">
-        <h2>Transaction history</h2>
-        <span class="muted">This browser only</span>
-      </div>
-      <div id="ledger" class="ledger-list" aria-live="polite"></div>
-    </section>
-  </main>
-
-  <footer class="footer">
-    <p>© 2026 Analyst · Demo environment</p>
-    <span>Virtual balances only</span>
-  </footer>
-  <script src="script.js"></script>
-</body>
-</html>
+<body><header class="header"><a class="logo" href="index.html">THE EYE<span>.</span></a><nav class="nav"><a  href="index.html">Home</a><a  href="dashboard.html">Machine stock</a><a  href="account.html">My machines</a><a class="active" href="admin.html">Admin demo</a></nav></header><main class="page page-wide"><p class="eyebrow">OWNER CONFIGURATION PREVIEW</p><h1>Admin demo.</h1><div class="notice"><strong>Not secured:</strong> this page is publicly accessible and only edits this browser's local demo data. It is not a real admin console. Do not use it to manage real customer funds, stock, or payouts.</div>
+<div class="grid two"><section class="panel"><h2>Credit virtual demo balance</h2><p class="muted">Testing only. This balance is not money and cannot be withdrawn.</p><form id="demo-credit-form" class="submit-form"><div class="form-group"><label for="credit-amount">Amount (UGX)</label><input id="credit-amount" type="number" min="1" step="1" required placeholder="100000"></div><button class="btn btn-primary" type="submit">Add virtual balance</button></form><p id="admin-message" class="muted" aria-live="polite"></p></section>
+<section class="panel"><h2>Daily rate rules</h2><p class="muted">Rates are sample values to demonstrate category + price-tier selection. Real rules must be reviewed and configured before launch.</p><form id="rate-form" class="submit-form"><div class="form-group"><label for="rate-machine">Machine / price tier</label><select id="rate-machine" required></select></div><div class="form-group"><label for="rate-value">Illustrative daily rate (%)</label><input id="rate-value" type="number" min="0" max="100" step="0.01" required></div><button class="btn btn-primary" type="submit">Save demo rate</button></form></section></div>
+<section class="panel"><div class="section-header"><h2>Stock overview</h2><a class="btn" href="dashboard.html">View public stock</a></div><div id="admin-stock" class="ledger-list"></div></section>
+<section class="panel"><h2>Launch requirements</h2><ul class="clean-list"><li>Secure sign-up and sign-in for each customer.</li><li>Server-side admin role and protected owner console.</li><li>Shared database for inventory, purchases, accounts, and audit logs.</li><li>Atomic stock deduction so the same unit cannot be assigned twice.</li><li>Clear contracts explaining whether the arrangement is machine rental, revenue sharing, or a financial investment.</li><li>Verified legal and regulatory review before handling real funds or advertising returns.</li></ul></section></main><footer class="footer"><p>© 2026 The Eye Analyst · Admin prototype</p></footer><script src="machine-app.js"></script></body></html>
