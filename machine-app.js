@@ -1,12 +1,12 @@
 (() => {
-  const KEY = "eye-analyst-machine-demo-v1";
+  const KEY = "eye-solar-machine-demo-v2";
   const initialStock = [
-    {id:"tractor-basic",name:"Compact Farm Tractor",category:"Agricultural",tier:"Entry tier",price:250000,rate:0.10,stock:8,description:"Compact equipment for small-farm work."},
-    {id:"tractor-pro",name:"Utility Farm Tractor",category:"Agricultural",tier:"Professional tier",price:650000,rate:0.15,stock:5,description:"Higher-capacity tractor category tier."},
-    {id:"harvester",name:"Crop Harvester",category:"Agricultural",tier:"Premium tier",price:1200000,rate:0.18,stock:3,description:"Harvesting equipment, premium price tier."},
-    {id:"water-pump",name:"Irrigation Water Pump",category:"Irrigation",tier:"Entry tier",price:120000,rate:0.08,stock:12,description:"Water movement and irrigation equipment."},
-    {id:"solar-pump",name:"Solar Irrigation Pump",category:"Irrigation",tier:"Premium tier",price:480000,rate:0.12,stock:6,description:"Solar-powered irrigation equipment."},
-    {id:"generator",name:"Portable Generator",category:"Power",tier:"Standard tier",price:300000,rate:0.09,stock:7,description:"Portable power equipment."}
+    {id:"solar-home-kit",name:"Solar Home System",category:"Home Solar",tier:"Entry tier",price:250000,rate:0.10,stock:8,description:"Solar panel, controller and basic home lighting kit."},
+    {id:"solar-home-plus",name:"Solar Home Power Kit",category:"Home Solar",tier:"Professional tier",price:650000,rate:0.12,stock:5,description:"Expanded solar kit for lights and selected small appliances."},
+    {id:"solar-fridge",name:"Solar Refrigerator System",category:"Home Solar",tier:"Premium tier",price:1200000,rate:0.15,stock:3,description:"Solar-powered cooling equipment for suitable off-grid settings."},
+    {id:"solar-water-pump",name:"Solar Water Pump",category:"Water & Irrigation",tier:"Entry tier",price:120000,rate:0.08,stock:12,description:"Solar-powered pumping for suitable water-supply needs."},
+    {id:"solar-irrigation",name:"Solar Irrigation Pump Kit",category:"Water & Irrigation",tier:"Premium tier",price:480000,rate:0.11,stock:6,description:"Solar pumping equipment for farm irrigation applications."},
+    {id:"solar-lighting",name:"Solar Security Lighting Kit",category:"Lighting",tier:"Standard tier",price:300000,rate:0.09,stock:7,description:"Solar-powered outdoor and security lighting equipment."}
   ];
   const fmt = n => new Intl.NumberFormat("en-UG",{style:"currency",currency:"UGX",maximumFractionDigits:0}).format(n);
   const read = () => { try { const d=JSON.parse(localStorage.getItem(KEY)||"null"); if(d&&Array.isArray(d.stock)&&Array.isArray(d.owned)&&Array.isArray(d.history)&&Number.isSafeInteger(d.balance)) return d; } catch(e) {} return {stock:initialStock.map(x=>({...x})),owned:[],history:[],balance:0}; };
