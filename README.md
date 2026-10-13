@@ -1,51 +1,43 @@
-# The Eye — Analyst
+# Analyst — Elvis's Personal Website
 
-A responsive, dark-blue public-information website with live World Bank indicators, recent news discovery, learning resources, public articles, and an editorial submission workflow.
+A dark-blue personal website and learning/project portal.
 
-## Run locally
+## Live site
 
-Open `index.html` in a browser for the static UI. The Supabase-backed article submission, published-article list, and admin dashboard require the site to be hosted and configured.
+https://analyst-tungsten-34.vercel.app/
 
-## Live data and news
+## Pages
 
-- **World Bank Indicators API** supplies Uganda's latest available observations for GDP growth, inflation, population, and employment in agriculture. Each metric shows the observation year and links to its source.
-- **GDELT DOC 2.0** powers `api/news.js`, a Vercel serverless endpoint for recent news discovery. News results are external reports, not independently fact-checked by The Eye.
+- `index.html` — homepage
+- `about.html` — about page
+- `dashboard.html` — projects and live-data concepts
+- `news.html` — learning/news page
+- `resources.html` — resources
+- `account.html` — UGX account-ledger simulation
+- `admin.html` — admin-workflow prototype
 
-No API key is required for those public data/news sources.
+## UGX ledger prototype: important limitations
 
-## Article submissions and editorial dashboard
+The account and admin pages are **demo simulations only**. They use browser `localStorage`, so entries stay in the current browser and are not shared between visitors or devices. The admin demo page is publicly accessible and is not protected by real authentication or server-side authorization.
 
-Article submissions are designed to be stored in Supabase, not in browser memory.
+- No real deposits are accepted.
+- No real funds are held.
+- Withdrawal actions only update the simulated balance; they do not send money.
+- Do not enter real personal or financial information.
 
-1. Create a Supabase project at https://supabase.com/dashboard.
-2. In Supabase SQL Editor, run `supabase/schema.sql`.
-3. In `supabase-config.js`, replace `https://YOUR_PROJECT.supabase.co` and `YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY` with your Supabase project URL and public publishable/anon key.
-4. Create the administrator account in Supabase Authentication (Dashboard → Authentication → Users). Use a strong, unique password.
-5. Promote only your own account to admin by running this SQL in the Supabase SQL Editor, replacing the email with the exact admin email:
-   ```sql
-   UPDATE public.profiles
-   SET role = 'admin'
-   WHERE id = (SELECT id FROM auth.users WHERE email = 'YOUR-ADMIN-EMAIL');
-   ```
-6. Deploy the repository to Vercel. Visit `/admin.html` and sign in with that account.
+## Before launching real accounts or payments
 
-Visitors create a subscriber account or sign in from the homepage before submitting. The article form inserts submissions with the signed-in subscriber ID and `status = 'pending'`. Row Level Security prevents anonymous visitors from submitting articles, and prevents subscribers from reading pending/rejected submissions or managing articles. The dashboard checks the signed-in user's profile role and only permits users whose role is `admin` to use editorial controls. Editors can edit submissions, approve, reject, return to review, publish, or delete them. The public Articles section queries only `status = 'published'`. The homepage includes bulletin cards for Uganda, world news, politics, business, education, agriculture, technology, health, sports, society and analysis. Bulletin cards filter the currently loaded news-discovery results; they do not claim to be complete topic-specific feeds.
+A production version needs a server-side database, a trusted authentication provider, server-enforced user/admin roles, server-side balance and transaction validation, an audit trail, and a legitimate payment provider. Never rely on hidden links, client-side code, or browser storage for financial security.
 
-### Security notes
+## Deploy
 
-- The browser config uses only the Supabase public publishable/anon key; this key is designed for public clients when Row Level Security is correctly configured.
-- **Never place a Supabase service-role key in browser code or commit it to GitHub.**
-- Keep the admin account credentials private. Do not promote ordinary contributor accounts to admin.
-- Authenticated subscriber submissions can still attract spam; before a high-traffic launch, add CAPTCHA/rate limiting and moderation alerts.
-- This implementation stores the submitted title, topic, summary/article text, author name, and contact email. Tell contributors how their contact information is used.
+This site is intended to be hosted on Vercel from this GitHub repository. If the repository is connected to the Vercel project, commits to `main` can trigger production deployments. Check the Vercel deployment status after pushing changes.
 
-## Deployment
+## Backend setup (next development stage)
 
-The repository is `TUNGSTEN-34/the-eye`. If Vercel is connected to its `main` branch, GitHub commits should trigger deployment automatically. Confirm the latest deployment in Vercel after configuration. The News endpoint needs Vercel's serverless runtime; opening the HTML as a local file will not make `/api/news` available.
+The `supabase/` folder contains a reviewed starting schema and setup notes for server-side accounts, user/admin roles, UGX ledger entries, and withdrawal requests:
 
-## Editorial transparency
+- [Supabase setup guide](supabase/README.md)
+- [Database schema](supabase/schema.sql)
 
-- World Bank figures show their source observation year and may lag the current year.
-- GDELT results are discovery links, not verified claims.
-- Only editor-published articles are displayed in the public Articles section.
-- If Supabase has not been configured, article submissions are not silently saved; the page displays a setup/unavailable message.
+These files are not yet connected to the live website. The current account and admin pages are still browser-only simulations. Create a Supabase project and run the SQL in its SQL Editor before wiring up real authentication. Never commit service-role keys or database passwords.

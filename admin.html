@@ -1,21 +1,72 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#050f22"><title>Editorial dashboard | The Eye</title>
-<style>
-:root{color-scheme:dark;--bg:#050f22;--panel:#0b1c36;--line:#263f63;--text:#edf4ff;--muted:#a8bad5;--cyan:#67eee0;--blue:#9bc5ff}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% 0%,#1b4675 0,transparent 35%),var(--bg);color:var(--text);font:15px/1.55 system-ui,sans-serif}.wrap{width:min(1100px,calc(100% - 32px));margin:auto}.top{padding:24px 0;border-bottom:1px solid var(--line)}a{color:#b9d8ff}.brand{font-weight:900;letter-spacing:.04em}.sub{color:var(--muted);font-size:13px}.panel,.article{background:linear-gradient(145deg,#102849,#091a33);border:1px solid var(--line);border-radius:18px;padding:22px;margin:22px 0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:grid;gap:6px;margin:12px 0}.field label{font-size:12px;color:#c6d7ef;font-weight:750}input,textarea,select{width:100%;padding:11px 12px;background:#07162e;border:1px solid #29466e;border-radius:9px;color:var(--text);font:inherit}textarea{min-height:130px;resize:vertical}button{padding:10px 14px;border:0;border-radius:10px;background:linear-gradient(110deg,#9bc5ff,#67eee0);color:#06142b;font-weight:800;cursor:pointer;margin:5px 6px 5px 0}button.secondary{background:transparent;border:1px solid var(--line);color:var(--text)}button.danger{background:#522d3c;color:#ffe5ec}button:disabled{opacity:.55;cursor:wait}.status{color:var(--cyan);font-size:13px;white-space:pre-wrap}.hidden{display:none!important}.article h3{margin:0 0 4px}.meta{color:var(--muted);font-size:12px}.actions{display:flex;flex-wrap:wrap;gap:6px}.pill{display:inline-block;border:1px solid #2b577c;border-radius:999px;padding:3px 9px;font-size:11px;color:#b9d8ff}.row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}@media(max-width:600px){.grid{grid-template-columns:1fr}}
-</style></head><body><header class="top"><div class="wrap row"><div><div class="brand">◉ THE EYE <span class="sub">/ EDITORIAL DESK</span></div><div class="sub">Private review dashboard · The Eye by Analyst</div></div><a href="/">← Return to website</a></div></header>
-<main class="wrap"><section id="loginPanel" class="panel"><h1>Admin sign in</h1><p class="sub">Only accounts explicitly assigned the admin role can manage articles. A regular account cannot grant itself administrator access.</p>
-<form id="loginForm"><div class="grid"><div class="field"><label for="email">Admin email</label><input id="email" type="email" autocomplete="username" required></div><div class="field"><label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required></div></div><button type="submit">Sign in securely</button></form><p id="loginMessage" class="status" role="status"></p></section>
-<section id="dashboard" class="hidden"><div class="row"><div><h1>Article review queue</h1><p class="sub">Edit drafts, approve or reject submissions, and publish approved articles.</p></div><button id="signOut" class="secondary">Sign out</button></div><p id="dashMessage" class="status" role="status"></p><div class="row"><h2>Submissions</h2><button id="reload" class="secondary">Refresh queue</button></div><div id="articles"></div></section></main>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/supabase-config.js"></script><script>
-const cfg=window.EYE_SUPABASE_CONFIG;const ready=cfg&&cfg.url&&cfg.anonKey&&!cfg.url.includes('YOUR_PROJECT')&&window.supabase;const client=ready?window.supabase.createClient(cfg.url,cfg.anonKey):null;
-const loginPanel=document.getElementById('loginPanel'),dashboard=document.getElementById('dashboard'),loginMessage=document.getElementById('loginMessage'),dashMessage=document.getElementById('dashMessage'),articlesBox=document.getElementById('articles');
-if(!client)loginMessage.textContent='Setup required: configure Supabase URL and publishable/anon key in supabase-config.js, then run supabase/schema.sql.';
-function message(el,text){el.textContent=text}
-function escapeText(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-async function checkAdmin(){if(!client)return;const {data:{session}}=await client.auth.getSession();if(!session){loginPanel.classList.remove('hidden');dashboard.classList.add('hidden');return}const {data:profile,error}=await client.from('profiles').select('role').eq('id',session.user.id).single();if(error||!profile||profile.role!=='admin'){await client.auth.signOut();message(loginMessage,'This account is not authorized as an administrator. Ask the site owner to assign the admin role in Supabase.');return}loginPanel.classList.add('hidden');dashboard.classList.remove('hidden');await loadArticles()}
-document.getElementById('loginForm').addEventListener('submit',async e=>{e.preventDefault();if(!client)return;const btn=e.currentTarget.querySelector('button');btn.disabled=true;message(loginMessage,'Signing in…');const {error}=await client.auth.signInWithPassword({email:document.getElementById('email').value,password:document.getElementById('password').value});btn.disabled=false;if(error){message(loginMessage,'Sign-in failed. Check your details and try again.');return}message(loginMessage,'');await checkAdmin()});
-async function setStatus(id,status){const patch={status};if(status==='published')patch.published_at=new Date().toISOString();if(status==='approved')patch.published_at=null;const {error}=await client.from('articles').update(patch).eq('id',id);if(error)throw error}
-async function loadArticles(){message(dashMessage,'Loading submissions…');articlesBox.replaceChildren();const {data,error}=await client.from('articles').select('*').order('created_at',{ascending:false});if(error){message(dashMessage,'Could not load submissions. Check database policies and setup.');return}message(dashMessage,data.length+' submission(s)');if(!data.length){articlesBox.innerHTML='<article class="article">No submissions yet.</article>';return}for(const item of data){const el=document.createElement('article');el.className='article';el.innerHTML='<div class="row"><div><h3>'+escapeText(item.title)+'</h3><div class="meta">'+escapeText(item.author_name)+' · '+escapeText(item.author_email)+' · '+escapeText(new Date(item.created_at).toLocaleString())+'</div></div><span class="pill">'+escapeText(item.status)+'</span></div><div class="grid"><div class="field"><label>Title</label><input data-field="title" maxlength="140" value="'+escapeText(item.title)+'"></div><div class="field"><label>Topic</label><input data-field="category" maxlength="80" value="'+escapeText(item.category)+'"></div></div><div class="field"><label>Summary / article text</label><textarea data-field="summary" maxlength="3000">'+escapeText(item.summary)+'</textarea></div><div class="field"><label>Editorial note (private)</label><input data-field="admin_notes" maxlength="1000" value="'+escapeText(item.admin_notes||'')+'"></div><div class="actions"><button data-action="save">Save edits</button><button data-action="approve" class="secondary">Approve</button><button data-action="publish">Publish</button><button data-action="reject" class="secondary">Reject</button><button data-action="pending" class="secondary">Return to review</button><button data-action="delete" class="danger">Delete</button></div>';el.querySelectorAll('button[data-action]').forEach(btn=>btn.addEventListener('click',async()=>{btn.disabled=true;try{const action=btn.dataset.action;let patch;if(action==='save'){patch={title:el.querySelector('[data-field="title"]').value.trim(),category:el.querySelector('[data-field="category"]').value.trim(),summary:el.querySelector('[data-field="summary"]').value.trim(),admin_notes:el.querySelector('[data-field="admin_notes"]').value.trim()};if(!patch.title||!patch.category||!patch.summary)throw new Error('Title, topic, and article text are required.');const {error}=await client.from('articles').update(patch).eq('id',item.id);if(error)throw error}else if(action==='delete'){if(!confirm('Permanently delete this submission?'))return;const {error}=await client.from('articles').delete().eq('id',item.id);if(error)throw error}else{await setStatus(item.id,({approve:'approved',publish:'published',reject:'rejected',pending:'pending'})[action])}message(dashMessage,'Saved changes for “'+item.title+'”.');await loadArticles()}catch(err){message(dashMessage,err.message||'Could not save this change.')}finally{btn.disabled=false}}));articlesBox.appendChild(el)}}
-document.getElementById('reload').addEventListener('click',loadArticles);document.getElementById('signOut').addEventListener('click',async()=>{await client.auth.signOut();loginPanel.classList.remove('hidden');dashboard.classList.add('hidden');message(loginMessage,'You have signed out.')});if(client)checkAdmin();
-</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Demo Admin Ledger — Analyst</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="header">
+    <a class="logo" href="index.html">ELVIS<span>.</span></a>
+    <nav class="nav" aria-label="Main navigation">
+      <a href="index.html">Home</a>
+      <a href="dashboard.html">Projects</a>
+      <a href="account.html">Account demo</a>
+      <a class="active" href="admin.html">Admin demo</a>
+    </nav>
+  </header>
+
+  <main class="page page-wide">
+    <p class="eyebrow">ADMIN WORKFLOW PREVIEW</p>
+    <h1>Demo ledger control.</h1>
+
+    <div class="notice" role="note">
+      <strong>Prototype only — not secured.</strong>
+      This page is publicly accessible and stores demo transactions only in this browser. It has no real admin authentication, shared database, customer accounts, deposits, or real payouts. Do not enter real personal or financial information.
+    </div>
+
+    <section class="balance-panel" aria-live="polite">
+      <div>
+        <div class="label">Current simulated balance</div>
+        <div id="balance" class="balance">UGX 0</div>
+      </div>
+      <button class="btn" id="reset-ledger" type="button">Reset demo ledger</button>
+    </section>
+
+    <section class="ledger-grid">
+      <div class="panel">
+        <h2>Manual demo adjustment</h2>
+        <p class="muted">Add a clearly simulated amount to test the ledger workflow.</p>
+        <form id="admin-form" class="submit-form">
+          <div class="form-group">
+            <label for="adjustment">Amount (UGX)</label>
+            <input id="adjustment" name="adjustment" type="number" min="1" step="1" required placeholder="100000">
+          </div>
+          <button class="btn btn-primary" type="submit">Add demo adjustment</button>
+        </form>
+      </div>
+      <div class="panel">
+        <h2>Next development step</h2>
+        <p>Before this can manage real users, we must connect a trusted authentication provider and server-side database, enforce admin roles on the server, and keep a tamper-resistant audit log.</p>
+        <p class="muted">A hidden link or browser-only password would not secure this page.</p>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="section-header">
+        <h2>Transaction history</h2>
+        <span class="muted">This browser only</span>
+      </div>
+      <div id="ledger" class="ledger-list" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 Analyst · Demo environment</p>
+    <span>Virtual balances only</span>
+  </footer>
+  <script src="script.js"></script>
+</body>
+</html>

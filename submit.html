@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Submit Article — Analyst</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="logo">Analyst</div>
+    <nav class="nav">
+      <a href="index.html">Home</a>
+      <a href="dashboard.html">Live Data</a>
+      <a href="news.html">News</a>
+      <a href="resources.html">Resources</a>
+      <a href="about.html">About</a>
+      <a href="submit.html" class="submit-link active">+ Submit Article</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <h1>Submit an Article</h1>
+    <p class="subtitle">Anyone can contribute longer articles. Fill the form below and your article will be reviewed and published.</p>
+
+    <form id="submit-form" class="submit-form">
+      <div class="form-group">
+        <label for="author">Your Name</label>
+        <input type="text" id="author" name="author" required placeholder="e.g. Jane Doe" />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email (optional, for follow-up)</label>
+        <input type="email" id="email" name="email" placeholder="you@example.com" />
+      </div>
+
+      <div class="form-group">
+        <label for="title">Article Title</label>
+        <input type="text" id="title" name="title" required placeholder="Clear and descriptive title" />
+      </div>
+
+      <div class="form-group">
+        <label for="summary">Short Summary (1–2 sentences)</label>
+        <textarea id="summary" name="summary" rows="2" required placeholder="A brief overview that appears on the homepage and news list"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="content">Full Article (longer content)</label>
+        <textarea id="content" name="content" rows="12" required placeholder="Write your full article here. You can use multiple paragraphs."></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Submit Article</button>
+    </form>
+
+    <div id="form-success" class="success-message" style="display:none;">
+      <h2>Thank you!</h2>
+      <p>Your article has been received. It will appear on the site after review.</p>
+      <p class="note">Right now submissions are stored locally in your browser for demo. Tell me when you want a real multi-user backend (I can connect a free service so everyone can publish).</p>
+      <a href="news.html" class="btn">Back to News</a>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 Analyst · Public Information Portal</p>
+  </footer>
+  <script src="articles.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

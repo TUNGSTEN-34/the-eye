@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Account Simulator — Analyst</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="logo">Analyst</div>
+    <nav class="nav">
+      <a href="index.html">Home</a>
+      <a href="dashboard.html">Live Data</a>
+      <a href="news.html">News</a>
+      <a href="resources.html">Resources</a>
+      <a href="about.html">About</a>
+      <a href="account.html" class="active">Account</a>
+      <a href="admin.html">Admin demo</a>
+    </nav>
+  </header>
+
+  <main class="page page-wide">
+    <div class="notice">
+      <strong>Simulation only.</strong> This account uses a browser-local demo ledger. The displayed balance is not real money, no deposits are accepted, and withdrawal requests do not create real payments.
+    </div>
+
+    <div class="section-header">
+      <div>
+        <h1>Account Simulator</h1>
+        <p class="subtitle">Test the ledger and withdrawal workflow using UGX.</p>
+      </div>
+    </div>
+
+    <section class="balance-panel">
+      <div>
+        <div class="label">Simulated available balance</div>
+        <div id="balance" class="balance">UGX 0</div>
+      </div>
+      <div class="balance-actions">
+        <button class="btn" id="reset-ledger">Reset</button>
+      </div>
+    </section>
+
+    <section class="ledger-grid">
+      <div class="panel">
+        <h2>Demo admin adjustment</h2>
+        <p class="muted">For testing only. This changes the local simulated balance.</p>
+        <form id="admin-form" class="submit-form">
+          <div class="form-group">
+            <label for="adjustment">Amount (UGX)</label>
+            <input id="adjustment" type="number" min="0" step="1" required placeholder="100000" />
+          </div>
+          <button class="btn btn-primary" type="submit">Add to simulated balance</button>
+        </form>
+      </div>
+
+      <div class="panel">
+        <h2>Request withdrawal</h2>
+        <p class="muted">The requested amount is deducted from the simulated balance and recorded locally.</p>
+        <form id="withdraw-form" class="submit-form">
+          <div class="form-group">
+            <label for="withdrawal">Amount (UGX)</label>
+            <input id="withdrawal" type="number" min="1" step="1" required placeholder="50000" />
+          </div>
+          <button class="btn btn-primary" type="submit">Confirm simulated withdrawal</button>
+        </form>
+        <p id="withdraw-error" class="error-text"></p>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="section-header">
+        <h2>Ledger</h2>
+        <span class="muted">Stored only in this browser</span>
+      </div>
+      <div id="ledger" class="ledger-list"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 Analyst · Simulation environment</p>
+  </footer>
+  <script src="script.js"></script>
+</body>
+</html>
