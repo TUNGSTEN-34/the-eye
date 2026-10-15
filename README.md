@@ -1,43 +1,47 @@
-# Analyst — Elvis's Personal Website
+# The Eye Solar — Solar Machine Platform
 
-A dark-blue personal website and learning/project portal.
+A dark navy and solar-gold catalogue prototype for solar equipment, with browser-only demo accounts and machine assignment workflows.
 
-## Live site
+## Live website
 
-https://analyst-tungsten-34.vercel.app/
+- Production domain: https://the-eye-phi.vercel.app/
+- GitHub repository: https://github.com/TUNGSTEN-34/the-eye
 
-## Pages
+## Current pages
 
-- `index.html` — homepage
-- `about.html` — about page
-- `dashboard.html` — projects and live-data concepts
-- `news.html` — learning/news page
-- `resources.html` — resources
-- `account.html` — UGX account-ledger simulation
-- `admin.html` — admin-workflow prototype
+- `index.html` — short solar-themed homepage and navigation
+- `dashboard.html` — solar machine catalogue with search, category filters, and price sorting
+- `account.html` — browser demo of assigned machines and activity history
+- `join.html` — browser demo profile and automatically generated invite code
+- `admin.html` — public, browser-only admin workflow preview
+- `styles.css` — shared dark-blue responsive styling
+- `machine-app.js` — sample inventory, demo balance, assignment and illustrative rate calculations
+- `referral-app.js` — local-only demo profiles and invite codes
+- `catalog-filter.js` — catalogue search, category filtering and price sorting
 
-## UGX ledger prototype: important limitations
+## Important prototype limitations
 
-The account and admin pages are **demo simulations only**. They use browser `localStorage`, so entries stay in the current browser and are not shared between visitors or devices. The admin demo page is publicly accessible and is not protected by real authentication or server-side authorization.
+This is currently a front-end prototype, not a production-ready marketplace.
 
-- No real deposits are accepted.
-- No real funds are held.
-- Withdrawal actions only update the simulated balance; they do not send money.
-- Do not enter real personal or financial information.
+- Profiles, invite codes, balances, stock and machine assignments use the visitor's browser storage. They are not shared across devices or users.
+- The admin page is not protected by server-side authentication or authorization.
+- No payment is processed, no real equipment is delivered, and no real funds are held.
+- Catalogue prices are sample values and must be confirmed with suppliers before being treated as offers.
+- Daily-rate percentages and estimates are illustrative interface examples only. They are not guaranteed income, investment advice, or a promise that a user will be paid.
+- Browser storage can be edited by the visitor and must never be used as the authority for real balances, inventory, purchases or earnings.
 
-## Before launching real accounts or payments
+## Before a public launch
 
-A production version needs a server-side database, a trusted authentication provider, server-enforced user/admin roles, server-side balance and transaction validation, an audit trail, and a legitimate payment provider. Never rely on hidden links, client-side code, or browser storage for financial security.
+1. Add a trusted authentication provider and a shared server-side database.
+2. Enforce user and admin roles on the server; never rely on hiding a page link.
+3. Move inventory, ownership, rate calculations and audit history to server-side logic with database transactions.
+4. Validate invite codes on the server and prevent reuse or forgery.
+5. Define whether machines are sold, rented or used under another clearly documented arrangement.
+6. Obtain appropriate legal and financial review before collecting money or presenting earnings-related terms.
+7. Verify supplier pricing, product availability, image permissions and product specifications.
 
-## Deploy
+Never commit service-role keys, passwords, or other secrets to this repository.
 
-This site is intended to be hosted on Vercel from this GitHub repository. If the repository is connected to the Vercel project, commits to `main` can trigger production deployments. Check the Vercel deployment status after pushing changes.
+## Deployment
 
-## Backend setup (next development stage)
-
-The `supabase/` folder contains a reviewed starting schema and setup notes for server-side accounts, user/admin roles, UGX ledger entries, and withdrawal requests:
-
-- [Supabase setup guide](supabase/README.md)
-- [Database schema](supabase/schema.sql)
-
-These files are not yet connected to the live website. The current account and admin pages are still browser-only simulations. Create a Supabase project and run the SQL in its SQL Editor before wiring up real authentication. Never commit service-role keys or database passwords.
+The Vercel project `the-eye` is connected to this repository. Changes pushed to `main` should trigger a deployment; verify the latest production deployment in Vercel after each change.
