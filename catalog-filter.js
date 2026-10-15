@@ -4,8 +4,11 @@
   const category = document.getElementById("machine-category");
   const sort = document.getElementById("machine-sort");
   if (!host || !search || !category || !sort) return;
+  let applying = false;
 
   const apply = () => {
+    if (applying) return;
+    applying = true;
     const term = search.value.trim().toLowerCase();
     const selectedCategory = category.value;
     const cards = [...host.querySelectorAll(":scope > .card")];
@@ -24,10 +27,13 @@
         return match ? Number(match[1].replace(/,/g, "")) : 0;
       };
       visible.sort((a, b) => sort.value === "price-low" ? getPrice(a) - getPrice(b) : getPrice(b) - getPrice(a));
-      visible.forEach(card => host.appendChild(card));
+      visible.forEach((card, index) => {
+        if (host.children[index] !== card) host.insertBefore(card, host.children[index] || null);
+      });
     }
+    applying = false;
   };
   [search, category, sort].forEach(el => el.addEventListener("input", apply));
-  new MutationObserver(apply).observe(host, { childList: true });
+  new MutationObserver(() => { if (!applying) apply(); }).observe(host, { childList: true });
   apply();
 })();
